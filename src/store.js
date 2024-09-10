@@ -3,8 +3,17 @@
  */
 class Store {
   constructor(initState = {}) {
-    this.state = initState;
+    const initializedList = initState.list.map(item => ({
+      ...item,
+      selectionCount: item.selectionCount || 0
+    }));
+
+    this.state = { ...initState, list: initializedList };
     this.listeners = []; // Слушатели изменений состояния
+
+    this.currentCode = initializedList.length > 0
+      ? Math.max(...initializedList.map(item => item.code))
+      : 0;
   }
 
   /**
@@ -38,13 +47,19 @@ class Store {
     for (const listener of this.listeners) listener();
   }
 
+  generateNextCode() {
+    return ++this.currentCode;
+  }
+
   /**
    * Добавление новой записи
    */
   addItem() {
+    const newCode = this.generateNextCode();
+
     this.setState({
       ...this.state,
-      list: [...this.state.list, { code: this.state.list.length + 1, title: 'Новая запись' }],
+      list: [...this.state.list, { code: newCode, title: 'Новая запись', selectionCount: 0 }],
     });
   }
 
@@ -63,14 +78,22 @@ class Store {
    * Выделение записи по коду
    * @param code
    */
+
   selectItem(code) {
     this.setState({
       ...this.state,
       list: this.state.list.map(item => {
         if (item.code === code) {
-          item.selected = !item.selected;
+          return {
+            ...item,
+            selected: !item.selected,
+            selectionCount: item.selected ? item.selectionCount : item.selectionCount + 1
+          };
         }
-        return item;
+        return {
+          ...item,
+          selected: false
+        };
       }),
     });
   }
