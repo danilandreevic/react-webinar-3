@@ -3,17 +3,21 @@
  */
 class Store {
   constructor(initState = {}) {
-    const initializedList = initState.list.map(item => ({
-      ...item,
-      selectionCount: item.selectionCount || 0
-    }));
-
-    this.state = { ...initState, list: initializedList };
-    this.listeners = []; // Слушатели изменений состояния
-
-    this.currentCode = initializedList.length > 0
-      ? Math.max(...initializedList.map(item => item.code))
+    this.state = initState;
+    this.listeners = [];
+    this.currentCode = initState.list.length > 0
+      ? Math.max(...initState.list.map(item => item.code))
       : 0;
+  }
+
+  initializeList() {
+    this.setState({
+      ...this.state,
+      list: this.state.list.map(item => ({
+        ...item,
+        selectionCount: item.selectionCount || 0
+      }))
+    });
   }
 
   /**

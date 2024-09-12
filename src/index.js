@@ -15,6 +15,7 @@ const store = new Store({
     { code: 7, title: 'Седьмая запись' },
   ],
 });
+store.initializeList();
 
 const root = createRoot(document.getElementById('root'));
 
