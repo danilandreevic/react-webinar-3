@@ -14,7 +14,6 @@ const store = new Store({
     { code: 7, title: 'Товар сюрприз', price:0  },
   ],
 });
-store.initializeList();
 
 const root = createRoot(document.getElementById('root'));
 
