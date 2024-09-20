@@ -1,5 +1,13 @@
 .Controls {
+  border-bottom: 1px dashed #ccc;
+  padding: 20px 20px 10px;
   display: flex;
   justify-content: flex-end;
-  padding: 20px;
+}
+.Controls-cart {
+  padding: 0px 20px;
+}
+
+.Controls-cart__bold{
+  font-weight: bold;
 }
