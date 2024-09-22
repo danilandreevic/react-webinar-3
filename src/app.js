@@ -1,46 +1,41 @@
-import React, { useCallback, useState } from 'react';
+// src/app.js
+import React, { useCallback, useState, useEffect } from 'react';
 import List from "./components/list";
 import Controls from "./components/controls";
 import Head from "./components/head";
 import PageLayout from "./components/page-layout";
 import CartModal from "./components/cart-modal";
 
-/**
- * Приложение
- * @param store {Store} Состояние приложения
- * @returns {React.ReactElement}
- */
 function App({ store }) {
   const list = store.getState().list;
-  const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cart, setCart] = useState(store.getState().cart || []);
+  const [totalItems, setTotalItems] = useState(store.getState().totalItems || 0);
+  const [totalPrice, setTotalPrice] = useState(store.getState().totalPrice || 0);
 
-  const addHandler = useCallback((item) => {
-    setCart(prevCart => {
-      const existingItem = prevCart.find(cartItem => cartItem.code === item.code);
-      if (existingItem) {
-        return prevCart.map(cartItem =>
-          cartItem.code === item.code
-            ? { ...cartItem, quantity: cartItem.quantity + 1 }
-            : cartItem
-        );
-      } else {
-        return [...prevCart, { ...item, quantity: 1 }];
-      }
+  useEffect(() => {
+    const unsubscribe = store.subscribe(() => {
+      setCart(store.getState().cart || []);
+      setTotalItems(store.getState().totalItems || 0);
+      setTotalPrice(store.getState().totalPrice || 0);
     });
-  }, []);
+    return () => unsubscribe();
+  }, [store]);
 
-  const removeHandler = useCallback((item) => {
-    setCart(prevCart => prevCart.filter(cartItem => cartItem.code !== item.code));
-  }, []);
+  const addHandler = useCallback((code) => {
+    store.addItemToCart(code);
+  }, [store]);
 
-  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
-  const totalPrice = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const removeHandler = useCallback((code) => {
+    store.removeItemFromCart(code);
+  }, [store]);
+
+  const uniqueItemsCount = cart.length;
 
   return (
     <PageLayout>
       <Head title='Магазин' />
-      <Controls itemCart={totalItems} price={totalPrice} onOpenCart={() => setIsCartOpen(true)} />
+      <Controls itemCart={totalItems} uniqueItemsCount={uniqueItemsCount} price={totalPrice} onOpenCart={() => setIsCartOpen(true)} />
       <List list={list} onAdd={addHandler} />
       {isCartOpen && <CartModal cart={cart} onClose={() => setIsCartOpen(false)} onRemove={removeHandler} />}
     </PageLayout>

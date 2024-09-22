@@ -1,0 +1,29 @@
+.ProductItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 20px;
+  border-bottom: 1px dashed #ccc;
+  border-radius: 4px;
+
+}
+.ProductItem-first{
+  display: flex;
+  gap: 25px;
+}
+.ProductItem-second{
+  display: flex;
+  align-items: center;
+  gap: 25px;
+ }
+
+
+
+.ProductItem-actions {
+  display: flex;
+  align-items: center;
+}
+
+.ProductItem-actions button {
+  padding: 0 15px;
+  cursor: pointer;
+}

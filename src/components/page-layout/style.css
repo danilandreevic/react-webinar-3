@@ -1,3 +1,10 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: #535353;
+  font-family: sans-serif;
+}
+
 .PageLayout {
   max-width: 1024px;
   min-height: 100vh;

@@ -5,13 +5,13 @@ import Store from './store.js';
 
 const store = new Store({
   list: [
-    { code: 1, title: 'Название товара', price:100 },
-    { code: 2, title: 'Книга про React', price:770  },
-    { code: 3, title: 'Конфета', price:23  },
-    { code: 4, title: 'Трактор', price:7955320  },
-    { code: 5, title: 'Телефон Iphone XIXV', price:120000  },
-    { code: 6, title: 'Карандаши цветные', price:111  },
-    { code: 7, title: 'Товар сюрприз', price:0  },
+    { code: 1, title: 'Название товара', type: 'service', price:100 },
+    { code: 2, title: 'Книга про React', type: 'product', price:770  },
+    { code: 3, title: 'Конфета', type: 'product', price:23  },
+    { code: 4, title: 'Трактор', type: 'product', price:7955320  },
+    { code: 5, title: 'Телефон Iphone XIXV', type: 'product', price:120000  },
+    { code: 6, title: 'Карандаши цветные', type: 'product', price:111  },
+    { code: 7, title: 'Товар сюрприз',  type: 'product',price:0  },
   ],
 });
 

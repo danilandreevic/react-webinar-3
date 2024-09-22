@@ -1,0 +1,39 @@
+.Cart {
+  display: flex;
+  flex-direction: column;
+}
+
+.Cart-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px 10px 0;
+  border-bottom: 1px dashed #CCCCCC;
+}
+.Cart-item:first-child {
+  border-top: 1px dashed #CCCCCC;
+}
+
+.Cart-item-first {
+  display: flex;
+  gap: 25px;
+  padding: 15px;
+}
+
+.Cart-item-second {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+.Cart-item-button {
+cursor: pointer;
+}
+
+.Cart-footer {
+text-align: end;
+  padding: 20px 120px 40px 80px;
+  font-weight: bold;
+  margin-bottom: 70px;
+}
+.Cart-footer__price {
+  margin-left: 40px;
+}

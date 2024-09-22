@@ -1,0 +1,27 @@
+.ServiceItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 20px;
+  border-bottom: 1px dashed #ccc;
+  border-radius: 4px;
+}
+
+.ServiceItem-first{
+  display: flex;
+  gap: 25px;
+}
+.ServiceItem-second{
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.ServiceItem-actions {
+  display: flex;
+  align-items: center;
+}
+
+.ServiceItem-actions button {
+  padding: 0 15px;
+  cursor: pointer;
+}
