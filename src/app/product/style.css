@@ -1,0 +1,11 @@
+.ProductDetail-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+}
+
+.ProductDetail-header a {
+  padding-left: 20px;
+}
+
