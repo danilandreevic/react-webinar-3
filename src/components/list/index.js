@@ -24,8 +24,6 @@ List.propTypes = {
   renderItem: PropTypes.func,
 };
 
-List.defaultProps = {
-  renderItem: item => {},
-};
+
 
 export default memo(List);

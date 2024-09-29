@@ -15,12 +15,11 @@ class Basket extends StoreModule {
    */
   addToBasket(_id) {
     let sum = 0;
-    // Ищем товар в корзине, чтобы увеличить его количество
     let exist = false;
     const list = this.getState().list.map(item => {
       let result = item;
       if (item._id === _id) {
-        exist = true; // Запомним, что был найден в корзине
+        exist = true;
         result = { ...item, amount: item.amount + 1 };
       }
       sum += result.price * result.amount;
@@ -28,25 +27,51 @@ class Basket extends StoreModule {
     });
 
     if (!exist) {
-      // Поиск товара в каталоге, чтобы его добавить в корзину.
-      // @todo В реальном приложении будет запрос к АПИ вместо поиска по состоянию.
-      const item = this.store.getState().catalog.list.find(item => item._id === _id);
-      list.push({ ...item, amount: 1 }); // list уже новый, в него можно пушить.
-      // Добавляем к сумме.
-      sum += item.price;
+      // Поиск товара в каталоге
+      let item = this.store.getState().catalog.list.find(item => item._id === _id);
+
+      if (!item) {
+        // Если товар не найден, делаем запрос к API
+        this.store.actions.product.fetchProductById(_id).then(fetchedItem => {
+          if (fetchedItem) {
+            const updatedList = [...list, { ...fetchedItem, amount: 1 }];
+            const updatedSum = sum + fetchedItem.price;
+            this.setState(
+              {
+                ...this.getState(),
+                list: updatedList,
+                sum: updatedSum,
+                amount: updatedList.length,
+              },
+              'Добавление в корзину',
+            );
+          }
+        });
+      } else {
+        const updatedList = [...list, { ...item, amount: 1 }];
+        const updatedSum = sum + item.price;
+        this.setState(
+          {
+            ...this.getState(),
+            list: updatedList,
+            sum: updatedSum,
+            amount: updatedList.length,
+          },
+          'Добавление в корзину',
+        );
+      }
+    } else {
+      this.setState(
+        {
+          ...this.getState(),
+          list,
+          sum,
+          amount: list.length,
+        },
+        'Добавление в корзину',
+      );
     }
-
-    this.setState(
-      {
-        ...this.getState(),
-        list,
-        sum,
-        amount: list.length,
-      },
-      'Добавление в корзину',
-    );
   }
-
   /**
    * Удаление товара из корзины
    * @param _id Код товара
