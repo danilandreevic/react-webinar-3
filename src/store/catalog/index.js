@@ -87,6 +87,11 @@ class CatalogState extends StoreModule {
       'search[query]': params.query,
     };
 
+    if (params.category) {
+      apiParams['search[category]'] = params.category;
+    }
+
+
     const response = await fetch(`/api/v1/articles?${new URLSearchParams(apiParams)}`);
     const json = await response.json();
     this.setState(
@@ -98,6 +103,35 @@ class CatalogState extends StoreModule {
       },
       'Загружен список товаров из АПИ',
     );
+  }
+
+  async fetchCategories() {
+    try {
+      const response = await fetch('/api/v1/categories?fields=_id,title,parent(_id)&limit=*');
+
+      const json = await response.json();
+      const categories = json.result.items || [];
+
+      const categoryMap = {};
+      categories.forEach(category => {
+        categoryMap[category._id] = { ...category, children: [] };
+      });
+
+      categories.forEach(category => {
+        if (category.parent) {
+          categoryMap[category.parent._id].children.push(categoryMap[category._id]);
+        }
+      });
+
+      const topLevelCategories = categories.filter(category => !category.parent);
+
+      this.setState({
+        ...this.getState(),
+        categories: topLevelCategories.map(category => categoryMap[category._id]),
+      }, 'Загружен список категорий');
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+    }
   }
 }
 

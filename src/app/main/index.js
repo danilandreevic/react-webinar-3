@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo} from 'react';
 import useStore from '../../hooks/use-store';
 import useTranslate from '../../hooks/use-translate';
 import useInit from '../../hooks/use-init';
@@ -8,10 +8,8 @@ import Head from '../../components/head';
 import CatalogFilter from '../../containers/catalog-filter';
 import CatalogList from '../../containers/catalog-list';
 import LocaleSelect from '../../containers/locale-select';
+import LoginToolContainer from '../../containers/login-tool-container';
 
-/**
- * Главная страница - первичная загрузка каталога
- */
 function Main() {
   const store = useStore();
 
@@ -27,6 +25,7 @@ function Main() {
 
   return (
     <PageLayout>
+      <LoginToolContainer />
       <Head title={t('title')}>
         <LocaleSelect />
       </Head>

@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo } from 'react';
+import {memo, useCallback, useEffect, useMemo} from 'react';
 import useTranslate from '../../hooks/use-translate';
 import useStore from '../../hooks/use-store';
 import useSelector from '../../hooks/use-selector';
@@ -12,9 +12,15 @@ import SideLayout from '../../components/side-layout';
 function CatalogFilter() {
   const store = useStore();
 
+  useEffect(() => {
+    store.actions.catalog.fetchCategories();
+  }, [store]);
+
   const select = useSelector(state => ({
     sort: state.catalog.params.sort,
     query: state.catalog.params.query,
+    category: state.catalog.params.category,
+    categories: state.catalog.categories || [],
   }));
 
   const callbacks = {
@@ -24,6 +30,7 @@ function CatalogFilter() {
     onSearch: useCallback(query => store.actions.catalog.setParams({ query, page: 1 }), [store]),
     // Сброс
     onReset: useCallback(() => store.actions.catalog.resetParams(), [store]),
+    onCategoryChange: useCallback(category => store.actions.catalog.setParams({ category, page: 1 }), [store]),
   };
 
   const options = {
@@ -36,6 +43,15 @@ function CatalogFilter() {
       ],
       [],
     ),
+    categories: useMemo(() => {
+      const formatCategories = (categories, prefix = '') => {
+        return categories.flatMap(category => [
+          { value: category._id, title: `${prefix}${category.title}` },
+          ...formatCategories(category.children, `${prefix} - `),
+        ]);
+      };
+      return [{ value: '', title: 'Все' }, ...formatCategories(select.categories)];
+    }, [select.categories]),
   };
 
   const { t } = useTranslate();
@@ -43,6 +59,7 @@ function CatalogFilter() {
   return (
     <SideLayout padding="medium">
       <Select options={options.sort} value={select.sort} onChange={callbacks.onSort} />
+      <Select options={options.categories} value={select.category} onChange={callbacks.onCategoryChange} />
       <Input
         value={select.query}
         onChange={callbacks.onSearch}
