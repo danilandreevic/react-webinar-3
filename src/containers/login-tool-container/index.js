@@ -7,13 +7,17 @@ function LoginToolContainer() {
   const [username, setUsername] = useState('');
   const store = useStore();
   const navigate = useNavigate();
-  const isLogin = store.getState().login.isLogin;
+  const [isLogin, setIsLogin] = useState(store.getState().login.isLogin);
 
   useEffect(() => {
     const unsubscribe = store.subscribe(() => {
       const user = store.getState().login.user;
-      if (user) {
-        setUsername(user.username);
+      const loginState = store.getState().login.isLogin;
+      setIsLogin(loginState);
+      if (user && user.profile) {
+        setUsername(user.profile.name);
+      } else {
+        setUsername('');
       }
     });
     return () => unsubscribe();

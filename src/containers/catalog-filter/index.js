@@ -1,35 +1,47 @@
-import {memo, useCallback, useEffect, useMemo} from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import useTranslate from '../../hooks/use-translate';
 import useStore from '../../hooks/use-store';
-import useSelector from '../../hooks/use-selector';
 import Select from '../../components/select';
 import Input from '../../components/input';
 import SideLayout from '../../components/side-layout';
+import useSelector from "../../hooks/use-selector";
 
-/**
- * Контейнер со всеми фильтрами каталога
- */
 function CatalogFilter() {
   const store = useStore();
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    store.actions.catalog.fetchCategories();
+    store.actions.catalog.fetchCategories().then(fetchedCategories => {
+      const categoryMap = {};
+      fetchedCategories.forEach(category => {
+        categoryMap[category._id] = { ...category, children: [] };
+      });
+
+      fetchedCategories.forEach(category => {
+        if (category.parent) {
+          categoryMap[category.parent._id].children.push(categoryMap[category._id]);
+        }
+      });
+
+      const topLevelCategories = fetchedCategories.filter(category => !category.parent);
+      setCategories(topLevelCategories.map(category => categoryMap[category._id]));
+    });
+
+    store.actions.catalog.initParams();
   }, [store]);
 
   const select = useSelector(state => ({
     sort: state.catalog.params.sort,
     query: state.catalog.params.query,
     category: state.catalog.params.category,
-    categories: state.catalog.categories || [],
   }));
 
   const callbacks = {
-    // Сортировка
     onSort: useCallback(sort => store.actions.catalog.setParams({ sort }), [store]),
-    // Поиск
     onSearch: useCallback(query => store.actions.catalog.setParams({ query, page: 1 }), [store]),
-    // Сброс
-    onReset: useCallback(() => store.actions.catalog.resetParams(), [store]),
+    onReset: useCallback(() => {
+      store.actions.catalog.resetParams();
+    }, [store]),
     onCategoryChange: useCallback(category => store.actions.catalog.setParams({ category, page: 1 }), [store]),
   };
 
@@ -50,21 +62,22 @@ function CatalogFilter() {
           ...formatCategories(category.children, `${prefix} - `),
         ]);
       };
-      return [{ value: '', title: 'Все' }, ...formatCategories(select.categories)];
-    }, [select.categories]),
+      return [{ value: '', title: 'Все' }, ...formatCategories(categories)];
+    }, [categories]),
   };
 
   const { t } = useTranslate();
 
   return (
     <SideLayout padding="medium">
-      <Select options={options.sort} value={select.sort} onChange={callbacks.onSort} />
       <Select options={options.categories} value={select.category} onChange={callbacks.onCategoryChange} />
+      <Select options={options.sort} value={select.sort} onChange={callbacks.onSort} />
       <Input
         value={select.query}
         onChange={callbacks.onSearch}
         placeholder={'Поиск'}
         delay={1000}
+        width="300px"
       />
       <button onClick={callbacks.onReset}>{t('filter.reset')}</button>
     </SideLayout>

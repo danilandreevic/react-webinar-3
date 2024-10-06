@@ -28,6 +28,7 @@ function Input({ type = 'text', theme = '', ...props })
     type={type}
     placeholder={props.placeholder}
     onChange={onChange}
+    style={{width: props.width}}
   />);
 }
 
@@ -38,6 +39,7 @@ Input.propTypes = {
   placeholder: PropTypes.string,
   onChange: PropTypes.func,
   theme: PropTypes.string,
+  width: PropTypes.string,
 };
 
 export default memo(Input);

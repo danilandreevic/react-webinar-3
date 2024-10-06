@@ -1,8 +1,13 @@
 
-.Login-tool {
+.LoginTool {
   padding: 10px;
   display: flex;
   justify-content: flex-end;
   gap: 20px;
+  border-bottom: 2px solid #DCDCDC;
 }
-
+.LoginTool-link {
+  color: #0087E9;
+  border-bottom: 2px solid #0087E9;
+  text-decoration: none;
+}

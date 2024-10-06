@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import useSelector from '../hooks/use-selector';
 import Main from './main';
@@ -5,6 +6,7 @@ import Basket from './basket';
 import Article from './article';
 import Login from "./login";
 import Profile from "./profile";
+import useStore from "../hooks/use-store";
 
 /**
  * Приложение
@@ -12,7 +14,11 @@ import Profile from "./profile";
  */
 function App() {
   const activeModal = useSelector(state => state.modals.name);
+  const store = useStore();
 
+  useEffect(() => {
+    store.actions.login.restoreSession();
+  }, [store]);
   return (
     <>
       <Routes>

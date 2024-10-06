@@ -1,13 +1,6 @@
 import StoreModule from '../module';
 
-/**
- * Состояние каталога - параметры фильтра и список товара
- */
 class CatalogState extends StoreModule {
-  /**
-   * Начальное состояние
-   * @return {Object}
-   */
   initState() {
     return {
       list: [],
@@ -16,18 +9,13 @@ class CatalogState extends StoreModule {
         limit: 10,
         sort: 'order',
         query: '',
+        category: '',
       },
       count: 0,
       waiting: false,
     };
   }
 
-  /**
-   * Инициализация параметров.
-   * Восстановление из адреса
-   * @param [newParams] {Object} Новые параметры
-   * @return {Promise<void>}
-   */
   async initParams(newParams = {}) {
     const urlParams = new URLSearchParams(window.location.search);
     let validParams = {};
@@ -36,31 +24,18 @@ class CatalogState extends StoreModule {
       validParams.limit = Math.min(Number(urlParams.get('limit')) || 10, 50);
     if (urlParams.has('sort')) validParams.sort = urlParams.get('sort');
     if (urlParams.has('query')) validParams.query = urlParams.get('query');
+    if (urlParams.has('category')) validParams.category = urlParams.get('category');
     await this.setParams({ ...this.initState().params, ...validParams, ...newParams }, true);
   }
 
-  /**
-   * Сброс параметров к начальным
-   * @param [newParams] {Object} Новые параметры
-   * @return {Promise<void>}
-   */
   async resetParams(newParams = {}) {
-    // Итоговые параметры из начальных, из URL и из переданных явно
     const params = { ...this.initState().params, ...newParams };
-    // Установка параметров и загрузка данных
     await this.setParams(params);
   }
 
-  /**
-   * Установка параметров и загрузка списка товаров
-   * @param [newParams] {Object} Новые параметры
-   * @param [replaceHistory] {Boolean} Заменить адрес (true) или новая запись в истории браузера (false)
-   * @returns {Promise<void>}
-   */
   async setParams(newParams = {}, replaceHistory = false) {
     const params = { ...this.getState().params, ...newParams };
 
-    // Установка новых параметров и признака загрузки
     this.setState(
       {
         ...this.getState(),
@@ -70,7 +45,6 @@ class CatalogState extends StoreModule {
       'Установлены параметры каталога',
     );
 
-    // Сохранить параметры в адрес страницы
     let urlSearch = new URLSearchParams(params).toString();
     const url = window.location.pathname + '?' + urlSearch + window.location.hash;
     if (replaceHistory) {
@@ -91,7 +65,6 @@ class CatalogState extends StoreModule {
       apiParams['search[category]'] = params.category;
     }
 
-
     const response = await fetch(`/api/v1/articles?${new URLSearchParams(apiParams)}`);
     const json = await response.json();
     this.setState(
@@ -108,29 +81,11 @@ class CatalogState extends StoreModule {
   async fetchCategories() {
     try {
       const response = await fetch('/api/v1/categories?fields=_id,title,parent(_id)&limit=*');
-
       const json = await response.json();
-      const categories = json.result.items || [];
-
-      const categoryMap = {};
-      categories.forEach(category => {
-        categoryMap[category._id] = { ...category, children: [] };
-      });
-
-      categories.forEach(category => {
-        if (category.parent) {
-          categoryMap[category.parent._id].children.push(categoryMap[category._id]);
-        }
-      });
-
-      const topLevelCategories = categories.filter(category => !category.parent);
-
-      this.setState({
-        ...this.getState(),
-        categories: topLevelCategories.map(category => categoryMap[category._id]),
-      }, 'Загружен список категорий');
+      return json.result.items || [];
     } catch (error) {
       console.error('Failed to fetch categories:', error);
+      return [];
     }
   }
 }

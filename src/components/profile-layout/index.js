@@ -8,10 +8,10 @@ function ProfileLayout({ profile }) {
 
   return (
     <div className="Profile">
-      <h1>Профиль</h1>
-      <p>Имя: <span className="Profile-text__bold">{profile.username}</span></p>
+      <h1 className="Profile-header">Профиль</h1>
+      <p>Имя: <span className="Profile-text__bold">{profile.profile.name}</span></p>
       <p>Телефон: <span className="Profile-text__bold">{profile.profile.phone}</span></p>
-      <p>Email: <span className="Profile-text__bold">{profile.email}</span></p>
+      <p>email: <span className="Profile-text__bold">{profile.email}</span></p>
     </div>
   );
 }

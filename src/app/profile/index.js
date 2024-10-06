@@ -1,26 +1,18 @@
-import { memo, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import useSelector from '../../hooks/use-selector';
+import { memo} from 'react';
 import PageLayout from '../../components/page-layout';
 import Head from '../../components/head';
 import Navigation from '../../containers/navigation';
 import LocaleSelect from '../../containers/locale-select';
 import LoginToolContainer from "../../containers/login-tool-container";
 import ProfileLayout from "../../components/profile-layout";
+import withSessionCheck from "../../hooks/withSessionCheck";
+import useSelector from "../../hooks/use-selector";
 
 function Profile() {
-  const navigate = useNavigate();
-
   const select = useSelector(state => ({
-    user: state.login.user,
+    profile: state.login.user,
     isLogin: state.login.isLogin,
   }));
-
-  useEffect(() => {
-    if (select.isLogin === false) {
-      navigate('/login');
-    }
-  }, [select.isLogin, navigate]);
 
   return (
     <PageLayout>
@@ -29,9 +21,9 @@ function Profile() {
         <LocaleSelect />
       </Head>
       <Navigation />
-      <ProfileLayout profile={select.user} />
+      <ProfileLayout profile={select.profile} />
     </PageLayout>
   );
 }
 
-export default memo(Profile);
+export default withSessionCheck(memo(Profile));

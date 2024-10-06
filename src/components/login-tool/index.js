@@ -8,10 +8,10 @@ function LoginTool({ isLogin = false, onLogin = {}, onLogout = {}, username ='' 
   };
 
   return (
-    <div className="Login-tool">
+    <div className="LoginTool">
       {isLogin ? (
         <>
-          <Link to="/profile">{username}</Link>
+          <Link className="LoginTool-link" to="/profile">{username}</Link>
           <button onClick={handleLogoutClick}>Выход</button>
         </>
       ) : (

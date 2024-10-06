@@ -2,14 +2,40 @@ import StoreModule from '../module';
 
 class LoginState extends StoreModule {
   initState() {
-    const token = localStorage.getItem('token');
     return {
       user: null,
-      token: token || null,
-      isLogin: !!token,
+      token: null,
+      isLogin: false,
       error: null,
     };
   }
+
+  initialize() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.setState({
+        token: token,
+        isLogin: true,
+      });
+      this.fetchProfile();
+    }
+  }
+
+  async restoreSession() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.setState({
+        token: token,
+        isLogin: true,
+      });
+      try {
+        await this.fetchProfile();
+      } catch (error) {
+        console.error('Failed to restore session:', error);
+      }
+    }
+  }
+
   async login(credentials) {
     try {
       const response = await fetch('/api/v1/users/sign', {
@@ -20,7 +46,8 @@ class LoginState extends StoreModule {
         body: JSON.stringify(credentials),
       });
       if (!response.ok) {
-        throw new Error(`Ошибка логина! Статус: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.error.message);
       }
       const data = await response.json();
       this.setState({
@@ -37,6 +64,7 @@ class LoginState extends StoreModule {
       throw error;
     }
   }
+
   async logout() {
     try {
       const token = this.getState().token || localStorage.getItem('token');
@@ -62,11 +90,12 @@ class LoginState extends StoreModule {
       this.setState({ error: error.message });
     }
   }
+
   async fetchProfile() {
     try {
       const token = this.getState().token || localStorage.getItem('token');
       if (!token) {
-        throw new Error('Токен не найден');
+        throw new Error('Token not found');
       }
 
       const response = await fetch('/api/v1/users/self?fields=*', {
@@ -78,7 +107,16 @@ class LoginState extends StoreModule {
       });
 
       if (!response.ok) {
-        throw new Error(`Ошибка профиля! Статус: ${response.status}`);
+        if (response.status === 403) {
+          this.setState({
+            user: null,
+            token: null,
+            isLogin: false,
+            error: 'Invalid token',
+          });
+          localStorage.removeItem('token');
+        }
+        throw new Error(`Profile error! Status: ${response.status}`);
       }
 
       const data = await response.json();
@@ -90,7 +128,14 @@ class LoginState extends StoreModule {
         error: null,
       });
     } catch (error) {
-      throw new Error(`Ошибка при загрузке профиля: ${error}`);
+      this.setState({
+        user: null,
+        token: null,
+        isLogin: false,
+        error: error.message,
+      });
+      localStorage.removeItem('token');
+      console.error(`Error loading profile: ${error}`);
     }
   }
 }

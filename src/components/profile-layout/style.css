@@ -1,6 +1,10 @@
 .Profile {
   margin: 60px 20px 0;
 }
+.Profile-header {
+  margin-bottom: 30px;
+}
 .Profile-text__bold {
   font-weight: bold;
 }
+

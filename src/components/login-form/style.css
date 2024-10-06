@@ -5,7 +5,7 @@
   gap: 17px;
 }
 
-.LoginFomr-header {
+.LoginForm-header {
   margin: 0;
 }
 .LoginForm-form {
@@ -15,11 +15,16 @@
   gap: 17px;
 
 }
-
-.LoginForm-form > * {
-  padding: 5px;
+.LoginForm-form > div > input {
+  height: 26px;
+  width: 200px;
 }
-
+.LoginForm-form > div > p {
+  margin: 0;
+}
+.LoginForm-button {
+  width: fit-content;
+}
 .LoginForm__error{
   color: #FF0000;
   font-weight: bold;
