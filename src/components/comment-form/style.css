@@ -1,0 +1,21 @@
+.CommentForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.CommentForm-textarea {
+  resize: none;
+  height: 80px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin: 0 0 10px;
+}
+
+.CommentForm-header{
+  margin: 10px 0;
+}
+.CommentForm-button {
+  width: fit-content;
+}
+

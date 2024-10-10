@@ -1,0 +1,61 @@
+.ArticleComments {
+  margin: 0 40px;
+}
+.ArticleComments-content {
+  margin: 30px 0;
+}
+.ArticleComments-content > * {
+  margin: 10px 0;
+}
+.ArticleComments-list {
+  list-style-type: none;
+}
+
+.ArticleComments-item {
+  margin-bottom: 20px;
+}
+
+.ArticleComments-item_child {
+  margin-left: 30px;
+}
+
+
+.ArticleComments-author {
+  font-weight: bold;
+}
+
+.ArticleComments-date {
+  color: #666666;
+  font-size: 12px;
+  margin-left: 10px;
+}
+
+.ArticleComments-reply-button {
+  color: #0087E9;
+  border: none;
+  background-color:white;
+  cursor: pointer;
+  padding: 0;
+}
+
+.ArticleComments-new-comment-form {
+  margin: 0 40px 0;
+}
+.ArticleComments-link {
+  padding-bottom: 92px;
+}
+.ArticleComments-link-login {
+  color: #0087E9;
+}
+.ArticleComments-button-cancel {
+  font-size: 16px;
+  font-weight: 400;
+  color: gray;
+  border: none;
+  background: white;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.ArticleComments-login {
+  margin: 30px 0px;
+}
