@@ -1,18 +1,23 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import CommentForm from '../comment-form/index';
 import { cn as bem } from '@bem-react/classname';
 import './style.css';
 import { Link } from 'react-router-dom';
 
-const ArticleComments = ({ comments, replyTo, setReplyTo, handleAddComment, exists, link }) => {
+const ArticleComments = ({ comments, replyTo, setReplyTo, handleAddComment, exists, link,user }) => {
   const cn = bem('ArticleComments');
-
+  const maxDepth = 3;
+  const replyFormRef = useRef(null);
+  useEffect(() => {
+    if (replyFormRef.current) {
+      replyFormRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [replyTo]);
   const renderComment = (comment) => (
-    <li key={comment._id} className={cn('item', { child: comment.parent })}>
+    <li key={comment._id} className={cn('item', { child: comment.parent && comment.depth <= maxDepth })}>
       <div className={cn('content')}>
         <p className={cn('author')}>
-          <span>{comment.author.profile.name}</span>
-          <span className={cn('date')}>
+          <span className={comment.author?.profile?.name === user.profile?.name ? cn('author-name') : ''}>{comment.author?.profile?.name}</span>          <span className={cn('date')}>
             {new Date(comment.dateCreate).toLocaleDateString('ru-RU', {
               day: 'numeric',
               month: 'long',
@@ -25,26 +30,29 @@ const ArticleComments = ({ comments, replyTo, setReplyTo, handleAddComment, exis
             })}
           </span>
         </p>
-        <p>{comment.text}</p>
+        <p className={cn('text')}>{comment.text}</p>
         <button
           className={cn('reply-button')}
           onClick={() => setReplyTo(comment._id)}
         >
           Ответить
         </button>
-        {replyTo === comment._id && (
-          exists ? (
-            <CommentForm onSubmit={(text) => handleAddComment(text, comment._id)}/>
-          ) : (
-            <div className={cn('login')}>
-              <Link className={cn('link-login')} to={link}>Войдите</Link>, чтобы иметь возможность комментировать.
-              <button className={cn('button-cancel')} onClick={() => setReplyTo(null)}>Отмена</button>
-            </div>
-          )
-        )}
       </div>
       {comment.children && (
-        <ul className={cn('list')}>{comment.children.map(renderComment)}</ul>
+        <ul className={cn('list')}>
+          {comment.children.map(renderComment)}
+          {replyTo === comment._id && (
+            exists ? (
+              <div ref={replyFormRef}>
+                <CommentForm onSubmit={(text) => handleAddComment(text, comment._id)} onCancel={() => setReplyTo(null)} />              </div>
+            ) : (
+              <div className={cn('login')} ref={replyFormRef}>
+                <Link className={cn('link-login')} to={link}>Войдите</Link>, чтобы иметь возможность комментировать.
+                <button className={cn('button-cancel')} onClick={() => setReplyTo(null)}>Отмена</button>
+              </div>
+            )
+          )}
+        </ul>
       )}
     </li>
   );
