@@ -16,7 +16,7 @@ import shallowequal from 'shallowequal';
 import articleActions from '../../store-redux/article/actions';
 import { fetchComments, addComment } from '../../store-redux/comments/actions';
 import ArticleComments from '../../components/article-comment';
-import { organizeComments } from '../../utils/organizeComments';
+import listToTree from '../../utils/list-to-tree';
 
 function Article() {
   const store = useStore();
@@ -54,7 +54,7 @@ function Article() {
     }, [dispatch, params.id]),
     setReplyTo,
   };
-  const organizedComments = organizeComments(select.comments);
+  const organizedComments = listToTree(select.comments);
   return (
     <PageLayout>
       <TopHead />

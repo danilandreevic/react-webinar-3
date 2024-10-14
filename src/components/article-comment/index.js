@@ -17,18 +17,21 @@ const ArticleComments = ({ comments, replyTo, setReplyTo, handleAddComment, exis
     <li key={comment._id} className={cn('item', { child: comment.parent && comment.depth <= maxDepth })}>
       <div className={cn('content')}>
         <p className={cn('author')}>
-          <span className={comment.author?.profile?.name === user.profile?.name ? cn('author-name') : ''}>{comment.author?.profile?.name}</span>          <span className={cn('date')}>
-            {new Date(comment.dateCreate).toLocaleDateString('ru-RU', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            })}{' '}
+     <span className={comment.author?.profile?.name === user?.profile?.name ? cn('author-name') : ''}>
+  {comment.author?.profile?.name || 'Unknown Author'}
+</span>
+          <span className={cn('date')}>
+          {new Date(comment.dateCreate).toLocaleDateString('ru-RU', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          })}{' '}
             в{' '}
             {new Date(comment.dateCreate).toLocaleTimeString('ru-RU', {
               hour: '2-digit',
               minute: '2-digit',
             })}
-          </span>
+        </span>
         </p>
         <p className={cn('text')}>{comment.text}</p>
         <button
@@ -44,7 +47,8 @@ const ArticleComments = ({ comments, replyTo, setReplyTo, handleAddComment, exis
           {replyTo === comment._id && (
             exists ? (
               <div ref={replyFormRef}>
-                <CommentForm onSubmit={(text) => handleAddComment(text, comment._id)} onCancel={() => setReplyTo(null)} />              </div>
+                <CommentForm onSubmit={(text) => handleAddComment(text, comment._id)} onCancel={() => setReplyTo(null)} />
+              </div>
             ) : (
               <div className={cn('login')} ref={replyFormRef}>
                 <Link className={cn('link-login')} to={link}>Войдите</Link>, чтобы иметь возможность комментировать.
