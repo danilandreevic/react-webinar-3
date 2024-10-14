@@ -8,7 +8,7 @@ let config = {
   context: path.join(__dirname, '/src'), // Директория с исходным кодом приложения
   entry: 'index.js', // Главный файл приложения
   output: {
-    path: path.join(__dirname, 'build'),
+    path: path.join(__dirname, 'public'),
     filename: '[name].js',
     clean: true,
   },
